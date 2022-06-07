@@ -58,13 +58,13 @@ pip install -r requirements.txt
 ```text
 usage: evaluate_conllx_driver.py [-h] [-g] [-p] [-gd] [-pd]
 
-This script takes 2 CoNLL-X files or 2 directories of ConllX files and evaluates the scores.
+This script takes 2 CoNLL-X files or 2 directories of CoNLL-X files and evaluates the scores.
 
 optional arguments:
-  -g , --gold          the gold ConllX file
-  -p , --parsed        the parsed ConllX file
-  -gd , --gold_dir     the gold directory containing ConllX files
-  -pd , --parsed_dir   the parsed directory containing ConllX files
+  -g , --gold          the gold CoNLL-X file
+  -p , --parsed        the parsed CoNLL-X file
+  -gd , --gold_dir     the gold directory containing CoNLL-X files
+  -pd , --parsed_dir   the parsed directory containing CoNLL-X files
 ```
 
 ---
