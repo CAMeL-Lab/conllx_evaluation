@@ -7,7 +7,7 @@ from class_conllx import Conllx
 from handle_args import Argument, generate_argparser_with_arguments
 from utils import get_file_names
 
-SCRIPT_DESCRIPTION = 'This script takes 2 CoNLL-X files or 2 directories of ConllX files and evaluates the scores.'
+SCRIPT_DESCRIPTION = 'This script takes 2 CoNLL-X files or 2 directories of CoNLL-X files and evaluates the scores.'
 
 def get_synced_file_names(gold_file_names, parsed_file_names):
     tuple_list = []
@@ -19,10 +19,10 @@ def get_synced_file_names(gold_file_names, parsed_file_names):
 
 if __name__ == '__main__':
     arg_list = [
-        Argument('-g', '--gold', str, 'the gold ConllX file'),
-        Argument('-p', '--parsed', str, 'the parsed ConllX file'),
-        Argument('-gd', '--gold_dir', str, 'the gold directory containing ConllX files'),
-        Argument('-pd', '--parsed_dir', str, 'the parsed directory containing ConllX files')
+        Argument('-g', '--gold', str, 'the gold CoNLL-X file'),
+        Argument('-p', '--parsed', str, 'the parsed CoNLL-X file'),
+        Argument('-gd', '--gold_dir', str, 'the gold directory containing CoNLL-X files'),
+        Argument('-pd', '--parsed_dir', str, 'the parsed directory containing CoNLL-X files')
         ]
 
     args = generate_argparser_with_arguments(arg_list, script_description=SCRIPT_DESCRIPTION)
