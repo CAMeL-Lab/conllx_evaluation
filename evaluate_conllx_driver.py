@@ -18,16 +18,19 @@ def get_synced_file_names(gold_file_names, parsed_file_names):
     return tuple_list
 
 if __name__ == '__main__':
-    arg_list = [
-        Argument('-g', '--gold', str, 'the gold CoNLL-X file'),
-        Argument('-p', '--parsed', str, 'the parsed CoNLL-X file'),
-        Argument('-gd', '--gold_dir', str, 'the gold directory containing CoNLL-X files'),
-        Argument('-pd', '--parsed_dir', str, 'the parsed directory containing CoNLL-X files')
-        ]
+    arg_lists = {
+        "two_files": [
+            Argument('-g', '--gold', str, 'the gold CoNLL-X file'),
+            Argument('-p', '--parsed', str, 'the parsed CoNLL-X file')],
+        "two_dirs":[
+            Argument('-gd', '--gold_dir', str, 'the gold directory containing CoNLL-X files'),
+            Argument('-pd', '--parsed_dir', str, 'the parsed directory containing CoNLL-X files')]
+        }
 
-    args = generate_argparser_with_arguments(arg_list, script_description=SCRIPT_DESCRIPTION)
+    args = generate_argparser_with_arguments(arg_lists, script_description=SCRIPT_DESCRIPTION)
 
     if args.gold and args.parsed:
+        print('comparing two files')
         gold_full_path = pathlib.Path(args.gold)
         parsed_full_path = pathlib.Path(args.parsed)
         gold_dir_path = gold_full_path.parent
@@ -35,6 +38,7 @@ if __name__ == '__main__':
         
         tuple_list = [(gold_full_path.name, parsed_full_path.name)]
     elif args.gold_dir and args.parsed_dir:
+        print('comparing two directories')
         gold_dir_path = pathlib.Path(args.gold_dir)
         parsed_dir_path = pathlib.Path(args.parsed_dir)
         gold_file_names = get_file_names(args.gold_dir, '.conllx')

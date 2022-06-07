@@ -60,9 +60,11 @@ usage: evaluate_conllx_driver.py [-h] [-g] [-p] [-gd] [-pd]
 
 This script takes 2 CoNLL-X files or 2 directories of CoNLL-X files and evaluates the scores.
 
-optional arguments:
+required arguments:
   -g , --gold          the gold CoNLL-X file
   -p , --parsed        the parsed CoNLL-X file
+
+or:
   -gd , --gold_dir     the gold directory containing CoNLL-X files
   -pd , --parsed_dir   the parsed directory containing CoNLL-X files
 ```

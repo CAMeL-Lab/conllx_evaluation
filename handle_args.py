@@ -31,8 +31,8 @@ from typing import List
 @dataclass
 class ParserComponents:
     parser: argparse.ArgumentParser
-    required: argparse._ArgumentGroup
-    optional: argparse._ArgumentGroup
+    two_files: argparse._ArgumentGroup
+    two_dirs: argparse._ArgumentGroup
 
 @dataclass
 class Argument():
@@ -48,16 +48,17 @@ def create_arg_parser(script_description: str):
     # return argparse.ArgumentParser(description=script_description)
     parser = argparse.ArgumentParser(description=script_description)
     parser._action_groups.pop()
-    required = parser.add_argument_group('required arguments')
-    optional = parser.add_argument_group('optional arguments')
-    return ParserComponents(parser, required, optional)
+    two_files = parser.add_argument_group('required arguments')
+    two_dirs = parser.add_argument_group('or')
+    return ParserComponents(parser, two_files, two_dirs)
 
 
-def add_argument_to_parser(parser_components, argument: Argument):
-    if argument.required:
-        parser_component = parser_components.required
+def add_argument_to_parser(parser_components, files_or_dirs, argument: Argument):
+    if files_or_dirs == 'two_files':
+        parser_component = parser_components.two_files
     else:
-        parser_component = parser_components.optional
+        parser_component = parser_components.two_dirs
+
     parser_component.add_argument(argument.char_flag,
         argument.string_flag,
         type=argument.arg_type,
@@ -66,12 +67,13 @@ def add_argument_to_parser(parser_components, argument: Argument):
         metavar=argument.metavar)
 
 
-def add_arguments_to_parser(parser, arguments: List[Argument]):
-    for argument in arguments:
-        add_argument_to_parser(parser, argument)
+def add_arguments_to_parser(parser, arguments):
+    for k, v in arguments.items():
+        for argument in v:
+            add_argument_to_parser(parser, k, argument)
 
 
-def generate_argparser_with_arguments(arguments: List[Argument], script_description:str):
+def generate_argparser_with_arguments(arguments, script_description:str):
     # create a parser
     parser_components = create_arg_parser(script_description)
 
