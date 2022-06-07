@@ -7,7 +7,7 @@ from class_conllx import Conllx
 from handle_args import Argument, generate_argparser_with_arguments
 from utils import get_file_names
 
-SCRIPT_DESCRIPTION = 'This script takes 2 ConllX files or 2 directories of ConllX files and evaluates the scores.'
+SCRIPT_DESCRIPTION = 'This script takes 2 CoNLL-X files or 2 directories of ConllX files and evaluates the scores.'
 
 def get_synced_file_names(gold_file_names, parsed_file_names):
     tuple_list = []
@@ -34,8 +34,7 @@ if __name__ == '__main__':
         parsed_dir_path = parsed_full_path.parent
         
         tuple_list = [(gold_full_path.name, parsed_full_path.name)]
-    
-    if args.gold_dir and args.parsed_dir:
+    elif args.gold_dir and args.parsed_dir:
         gold_dir_path = pathlib.Path(args.gold_dir)
         parsed_dir_path = pathlib.Path(args.parsed_dir)
         gold_file_names = get_file_names(args.gold_dir, '.conllx')
