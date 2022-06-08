@@ -1,4 +1,4 @@
-# CoNLL-X Evaluator
+# The Camel-CoNLL-X Evaluator
 
 Compare two CoNLL-X files or directories, to obtain the tokenization F-score and POS tag accuracy, as well as the LAS, UAS, and label scores.<br><br>
 Since comparison usually occurs between gold and parsed files, the two files/directories will be differentiated using `gold` and `parsed` keywords. In other words, you do not need to have gold and parsed files to compare; any two will do.<br><br>
