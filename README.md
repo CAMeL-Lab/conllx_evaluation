@@ -78,7 +78,7 @@ The sentences used are taken from CamelTB_1001_introduction_1.conllx and CamelTB
 ### Sample 1:
 The toknization is the same, and so the F_score is 100%, and the insertion/deletion counts are both 0. <br>
 ```text
-python evaluate_conllx_driver.py -g examples/sample_1_gold.conllx -p examples/sample_1_parsed.conllx
+python evaluate_conllx_driver.py -g samples/sample_1_gold.conllx -p samples/sample_1_parsed.conllx
 ```
 |||
 |- |- |
@@ -96,7 +96,7 @@ python evaluate_conllx_driver.py -g examples/sample_1_gold.conllx -p examples/sa
 ### Sample 2:
 
 ```text
-python evaluate_conllx_driver.py -g examples/sample_2_gold.conllx -p examples/sample_2_parsed.conllx
+python evaluate_conllx_driver.py -g samples/sample_2_gold.conllx -p samples/sample_2_parsed.conllx
 ```
 |||
 |- |- |
