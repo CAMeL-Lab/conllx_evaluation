@@ -19,8 +19,6 @@ def get_f_score_components(matches_df, counts_df):
     REC = matches_df['tokenization_matches'].sum() / counts_df['ref_token_count'].sum()
     PREC = matches_df['tokenization_matches'].sum() / counts_df['pred_token_count'].sum()
     f_score = (2*PREC*REC / (PREC+REC)).round(3)
-    print(f'REC: {REC.round(3)*100}')
-    print(f'PREC: {PREC.round(3)*100}')
     return {
         'tokenization_f_score': f_score*100,
         'tokenization_recall': REC*100,
