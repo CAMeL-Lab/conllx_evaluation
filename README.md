@@ -76,31 +76,39 @@ or:
 The sentences used are taken from CamelTB_1001_introduction_1.conllx and CamelTB_1001_night_1_1.conllx (data can be obtained from <a href="https://treebank.camel-lab.com/">The Camel Treebank</a>.
 
 ### Sample 1:
-The toknization is the same, and so the F_score is 100%, and the insertion/deletion counts are both 0.
+The toknization is the same, and so the F_score is 100%, and the insertion/deletion counts are both 0. <br>
+```text
+python evaluate_conllx_driver.py -g examples/sample_1_gold.conllx -p examples/sample_1_parsed.conllx
+```
+|||
+|- |- |
+| tokenization_f_score |      100.0 |
+| tokenization_precision |    100.0 |
+| tokenization_recall |       100.0 |
+| pos |                        81.6 |
+| uas |                        55.3 |
+| label |                      65.8 |
+| las |                        44.7 |
+| insertion_count |    0 |
+| deletion_count |     0 |
 
-tokenization_f_score      100.0
-tokenization_precision    100.0
-tokenization_recall       100.0
-pos                        81.6
-uas                        55.3
-label                      65.8
-las                        44.7
-dtype: float64
-insertion_count    0
-deletion_count     0
 
-### Sample 2
+### Sample 2:
 
-tokenization_f_score      90.400000
-tokenization_precision    90.384615
-tokenization_recall       90.384615
-pos                       86.500000
-uas                       65.400000
-label                     75.000000
-las                       57.700000
-dtype: float64
-insertion_count    2
-deletion_count     2
+```text
+python evaluate_conllx_driver.py -g examples/sample_2_gold.conllx -p examples/sample_2_parsed.conllx
+```
+|||
+|- |- |
+| tokenization_f_score |      90. |400000
+| tokenization_precision |    90. |384615
+| tokenization_recall |       90. |384615
+| pos |                       86. |500000
+| uas |                       65. |400000
+| label |                     75. |000000
+| las |                       57. |700000
+| insertion_count |    2 |
+| deletion_count |     2 |
 
 
 ---
