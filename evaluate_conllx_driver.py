@@ -65,4 +65,7 @@ if __name__ == '__main__':
     subcorpus_scores = get_scores_means(tree_counts_list, tree_matches_list)
 
     print(Series(subcorpus_scores.__dict__.copy()))
-    print(DataFrame(alignment_numbers_list).sum())
+    print()
+    
+    results = DataFrame(alignment_numbers_list).sum()
+    results.to_csv('results.tsv', sep='\t', index=False)
