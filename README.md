@@ -1,7 +1,9 @@
-# The Camel-CoNLL-X Evaluator
+# Camel-depeval
 
 Compare two CoNLL-X files or directories, to obtain the tokenization F-score and POS tag accuracy, as well as the LAS, UAS, and label scores.<br><br>
 Since comparison usually occurs between gold and parsed files, the two files/directories will be differentiated using `gold` and `parsed` keywords. In other words, you do not need to have gold and parsed files to compare; any two will do.<br><br>
+
+The tree alignment part of the code uses <a href="https://github.com/CAMeL-Lab/ced_word_alignment">ced_word_alignment</a>.
 
 Note: the evaluator is also CoNLL-U compatible.
 
@@ -73,7 +75,7 @@ or:
 
 ## Examples
 
-The sentences used are taken from CamelTB_1001_introduction_1.conllx and CamelTB_1001_night_1_1.conllx (data can be obtained from <a href="https://treebank.camel-lab.com/">The Camel Treebank</a>.
+The sentences used are taken from CamelTB_1001_introduction_1.conllx and CamelTB_1001_night_1_1.conllx (data can be obtained from <a href="http://treebank.camel-lab.com/">The Camel Treebank</a>.
 
 ### Sample 1:
 The toknization is the same, and so the F_score is 100%, and the insertion/deletion counts are both 0. <br>
