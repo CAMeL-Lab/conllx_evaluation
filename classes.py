@@ -14,6 +14,7 @@ class TreeMatches:
     uas_matches: int
     label_matches: int
     las_matches: int
+    word_matches: int
 
 @dataclass
 class TreeCounts:
@@ -26,6 +27,7 @@ class ConllxScores:
     tokenization_f_score: float
     tokenization_precision: float
     tokenization_recall: float
+    word_acc: float
     pos: float
     uas: float
     label: float

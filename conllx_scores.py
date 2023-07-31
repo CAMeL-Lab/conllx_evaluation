@@ -6,10 +6,10 @@ from classes import ConllxScores
 
 def get_all_but_f_score(matches_df, counts_df):
         # sum matches
-        matches_sums = matches_df[['pos_matches', 'uas_matches', 'label_matches', 'las_matches']].sum()
+        matches_sums = matches_df[['word_matches', 'pos_matches', 'uas_matches', 'label_matches', 'las_matches']].sum()
 
         # rename columns
-        matches_sums.rename({'pos_matches': 'pos', 'uas_matches': 'uas', 'label_matches': 'label', 'las_matches': 'las'}, inplace=True)
+        matches_sums.rename({'word_matches': 'word_acc', 'pos_matches': 'pos', 'uas_matches': 'uas', 'label_matches': 'label', 'las_matches': 'las'}, inplace=True)
 
         # divide by the total gold token count, round, multiply by 100 to get a percent, convert to dict
         return ((matches_sums / counts_df['ref_token_count'].sum()).round(3)*100).to_dict()
@@ -43,7 +43,6 @@ def get_scores_means(tree_matches_list, tree_counts_list) -> ConllxScores:
     Returns:
         ConllxStatistics: the mean scores for all sentences
     """
-
     matches_df = DataFrame(tree_matches_list)
     counts_df = DataFrame(tree_counts_list)
     

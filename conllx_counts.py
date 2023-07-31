@@ -34,6 +34,20 @@ def get_column_matches(col_1: Series, col_2: Series) -> float:
     """
     return (col_1 == col_2).sum()
 
+def get_word_list(col_1):
+    token_list = list(col_1) # ['a', '+b', 'c+', 'd']
+    token_list = [tok for tok in token_list if tok != 'tok']
+    sentence = ' '.join(token_list) # 'a +b c+ d'
+    
+    return sentence.replace('+ ', '+').replace(' +', '+').split() # ['a+b', 'c+d']
+    
+
+def get_word_matches(col_1: Series, col_2: Series) -> float:
+    word_list_1 = Series(get_word_list(col_1))
+    word_list_2 = Series(get_word_list(col_2))
+
+    return get_column_matches(word_list_1, word_list_2)
+
 def get_las_matches(head_1: Series, deprel_1: Series, head_2: Series, deprel_2: Series) -> float:
     """Returns the number of matches of the label and attachments between two trees
     (the HEAD and DEPREL columns).
@@ -80,6 +94,7 @@ def get_tree_matches(gold_df: DataFrame, parsed_df: DataFrame) -> Tuple[TreeMatc
     assert gold_df.shape[0] == parsed_df.shape[0], 'trees must be aligned!'
     
     tokenization_matches = get_column_matches(gold_df['FORM'], parsed_df['FORM'])
+    word_matches = get_word_matches(gold_df['FORM'], parsed_df['FORM'])
     
     dfs = gold_df.merge(parsed_df, on='ID', suffixes=('_gold', '_parsed'))
     
@@ -92,6 +107,7 @@ def get_tree_matches(gold_df: DataFrame, parsed_df: DataFrame) -> Tuple[TreeMatc
         get_column_matches(dfs['HEAD_gold'], dfs['HEAD_parsed']),
         get_column_matches(dfs['DEPREL_gold'], dfs['DEPREL_parsed']),
         get_las_matches(dfs['HEAD_gold'], dfs['DEPREL_gold'], dfs['HEAD_parsed'], dfs['DEPREL_parsed']),
+        word_matches
     )
 
 def get_tree_counts(gold_df, parsed_df):
