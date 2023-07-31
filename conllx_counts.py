@@ -130,14 +130,14 @@ def get_sentence_list_counts(
         p_df = p_sen.dependency_tree.copy()
         g_df, p_df = align_trees(g_df, p_df)
         
-        sentence_matches_list.append(get_tree_matches(g_df, p_df))
         sentence_counts_list.append(get_tree_counts(g_df, p_df))
+        sentence_matches_list.append(get_tree_matches(g_df, p_df))
         alignment_numbers_list.append(get_alignment_numbers(g_df, p_df))
     
-    sentence_counts = DataFrame(sentence_matches_list).sum()
-    sentence_matches = DataFrame(sentence_counts_list).sum()
+    sentence_counts = DataFrame(sentence_counts_list).sum()
+    sentence_matches = DataFrame(sentence_matches_list).sum()
     alignment_numbers = DataFrame(alignment_numbers_list).sum()
-        
+    
     return ConllxStatistics(
         sentence_counts,
         sentence_matches,
