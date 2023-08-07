@@ -4,13 +4,12 @@ from pandas import DataFrame
 from classes import ConllxScores
 
 
-def get_all_but_f_score(matches_df, counts_df):
+def get_attachment_scores(matches_df, counts_df):
         # sum matches
-        matches_sums = matches_df[['word_matches', 'pos_matches', 'uas_matches', 'label_matches', 'las_matches']].sum()
+        matches_sums = matches_df[['pos_matches', 'uas_matches', 'label_matches', 'las_matches']].sum()
 
         # rename columns
-        matches_sums.rename({'word_matches': 'word_acc', 'pos_matches': 'pos', 'uas_matches': 'uas', 'label_matches': 'label', 'las_matches': 'las'}, inplace=True)
-
+        matches_sums.rename({'pos_matches': 'pos', 'uas_matches': 'uas', 'label_matches': 'label', 'las_matches': 'las'}, inplace=True)
         # divide by the total gold token count, round, multiply by 100 to get a percent, convert to dict
         return ((matches_sums / counts_df['ref_token_count'].sum()).round(3)*100).to_dict()
     
@@ -24,7 +23,9 @@ def get_f_score_components(matches_df, counts_df):
         'tokenization_recall': REC*100,
         'tokenization_precision': PREC*100,
     }
-    
+
+def get_word_accuracy_score(word_matches: int, ref_word_count: int):
+    return {'word_accuracy': (word_matches / ref_word_count)*100}
 
 def get_scores_means(tree_matches_list, tree_counts_list) -> ConllxScores:
     """Gets the mean scores for all sentences.
@@ -47,5 +48,7 @@ def get_scores_means(tree_matches_list, tree_counts_list) -> ConllxScores:
     counts_df = DataFrame(tree_counts_list)
     
     scores_dict = {**get_attachment_scores(matches_df, counts_df), 
+                   **get_f_score_components(matches_df, counts_df),
+                   **get_word_accuracy_score(matches_df['word_matches'].iloc[0], counts_df['ref_word_count'].iloc[0])}
 
     return ConllxScores(**scores_dict)
