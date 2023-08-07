@@ -35,6 +35,29 @@ def get_column_matches(col_1: Series, col_2: Series) -> float:
     """
     return (col_1 == col_2).sum()
 
+def get_pp_matches(col_1: Series, col_2: Series) -> int:
+    """Returns if a sentence is perfect.
+
+    Args:
+        col_1 (Series): selected column of the first DataFrame
+        col_2 (Series): selected column of the second DataFrame
+
+    Returns:
+        int: whether the sentence is perfect
+    """
+    return int((col_1 == col_2).all())
+def get_pp_las_matches(head_1: Series, deprel_1: Series, head_2: Series, deprel_2: Series) -> int:
+    """Returns if a sentence is perfect.
+
+    Args:
+        col_1 (Series): selected column of the first DataFrame
+        col_2 (Series): selected column of the second DataFrame
+
+    Returns:
+        int: whether the sentence is perfect
+    """
+    return int((head_1 == head_2).all() & (deprel_1 == deprel_2).all())
+
 def get_word_list(col_1):
     token_list = list(col_1) # ['a', '+b', 'c+', 'd']
     token_list = [tok for tok in token_list if tok != 'tok']
@@ -123,7 +146,10 @@ def get_tree_matches(gold_df: DataFrame, parsed_df: DataFrame) -> Tuple[TreeMatc
         get_column_matches(dfs['HEAD_gold'], dfs['HEAD_parsed']),
         get_column_matches(dfs['DEPREL_gold'], dfs['DEPREL_parsed']),
         get_las_matches(dfs['HEAD_gold'], dfs['DEPREL_gold'], dfs['HEAD_parsed'], dfs['DEPREL_parsed']),
-        word_matches
+        word_matches,
+        get_pp_matches(dfs['HEAD_gold'], dfs['HEAD_parsed']),
+        get_pp_matches(dfs['DEPREL_gold'], dfs['DEPREL_parsed']),
+        get_pp_las_matches(dfs['HEAD_gold'], dfs['DEPREL_gold'], dfs['HEAD_parsed'], dfs['DEPREL_parsed'])
     )
 
 def get_tree_counts(gold_df, parsed_df):
@@ -171,9 +197,11 @@ def get_sentence_list_counts(
     sentence_counts = DataFrame(sentence_counts_list).sum()
     sentence_matches = DataFrame(sentence_matches_list).sum()
     alignment_numbers = DataFrame(alignment_numbers_list).sum()
-    
+    sentence_number = len(gold_sen_list)
+        
     return ConllxStatistics(
         sentence_counts,
         sentence_matches,
-        alignment_numbers
+        alignment_numbers,
+        sentence_number
     )
