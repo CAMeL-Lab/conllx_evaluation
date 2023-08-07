@@ -15,6 +15,9 @@ class TreeMatches:
     label_matches: int
     las_matches: int
     word_matches: int
+    pp_att_matches: int
+    pp_ls_matches: int
+    pp_las_matches: int
 
 @dataclass
 class TreeCounts:
@@ -33,6 +36,9 @@ class ConllxScores:
     uas: float
     label: float
     las: float
+    pp_att: float
+    pp_ls: float
+    pp_las: float
 
 @dataclass
 class ConllxStatistics:
@@ -40,3 +46,5 @@ class ConllxStatistics:
     tree_matches: TreeMatches
     # conllx_scores: ConllxScores
     alignment_numbers: AlignmentNumbers
+    sentence_number: int
+    
