@@ -51,6 +51,8 @@ if __name__ == '__main__':
     tree_counts_list = []
     tree_matches_list = []
     alignment_numbers_list = []
+    num_sentences_list = []
+
     for gold_file, parsed_file in tuple_list:
         gold_conllx = Conllx(file_name=gold_file, file_path=gold_dir_path)
         gold_conllx.read_file()
@@ -61,9 +63,12 @@ if __name__ == '__main__':
         tree_counts_list.append(conllx_file_statistics.tree_counts)
         tree_matches_list.append(conllx_file_statistics.tree_matches)
         alignment_numbers_list.append(conllx_file_statistics.alignment_numbers)
-    
-    subcorpus_scores = get_scores_means(tree_matches_list, tree_counts_list)
+        num_sentences_list.append(conllx_file_statistics.sentence_number)
 
+    subcorpus_scores = get_scores_means(tree_matches_list, tree_counts_list, num_sentences_list)
+
+    # print("\t".join(map(str, list(Series(subcorpus_scores.__dict__.copy()).values))))
+    # print(DataFrame(alignment_numbers_list).sum())
     print(Series(subcorpus_scores.__dict__.copy()))
     print()
     
