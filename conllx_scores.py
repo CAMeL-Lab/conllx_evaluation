@@ -46,7 +46,6 @@ def get_scores_means(tree_matches_list, tree_counts_list) -> ConllxScores:
     matches_df = DataFrame(tree_matches_list)
     counts_df = DataFrame(tree_counts_list)
     
-    scores_dict = {**get_all_but_f_score(matches_df, counts_df), 
-                   **get_f_score_components(matches_df, counts_df)}
+    scores_dict = {**get_attachment_scores(matches_df, counts_df), 
 
     return ConllxScores(**scores_dict)
