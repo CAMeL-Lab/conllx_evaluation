@@ -62,7 +62,7 @@ if __name__ == '__main__':
         tree_matches_list.append(conllx_file_statistics.tree_matches)
         alignment_numbers_list.append(conllx_file_statistics.alignment_numbers)
     
-    subcorpus_scores = get_scores_means(tree_counts_list, tree_matches_list)
+    subcorpus_scores = get_scores_means(tree_matches_list, tree_counts_list)
 
     print(Series(subcorpus_scores.__dict__.copy()))
     print()

@@ -12,6 +12,7 @@ from typing import List, Tuple
 
 from pandas import DataFrame, Series
 from align_trees import align_trees
+from ced_word_alignment.alignment import align_words
 from classes import AlignmentNumbers, ConllxStatistics, TreeCounts, TreeMatches
 from class_conllx import Sentence
 
@@ -33,6 +34,35 @@ def get_column_matches(col_1: Series, col_2: Series) -> float:
         float: the number of matches given two columns
     """
     return (col_1 == col_2).sum()
+
+def get_word_list(col_1):
+    token_list = list(col_1) # ['a', '+b', 'c+', 'd']
+    token_list = [tok for tok in token_list if tok != 'tok']
+    sentence = ' '.join(token_list) # 'a +b c+ d'
+    
+    return sentence.replace('+ ', '+').replace(' +', '+')
+    
+
+def get_word_matches(col_1: Series, col_2: Series) -> float:
+    
+    sentence_1 = get_word_list(col_1)
+    sentence_2 = get_word_list(col_2)
+    alignment = align_words(sentence_1, sentence_2)
+    
+    words_1 = sentence_1.split()
+    words_2 = sentence_2.split()
+    for i, word_comp in enumerate(alignment):
+        if word_comp[0] is None:
+            words_1.insert(i, 'tok')
+        if word_comp[1] is None:
+            words_2.insert(i, 'tok')
+    
+    matches = 0
+    for word_1, word_2 in zip(words_1, words_2):
+        if word_1 == word_2:
+            matches += 1
+    
+    return get_column_matches(Series(words_1), Series(words_2))
 
 def get_las_matches(head_1: Series, deprel_1: Series, head_2: Series, deprel_2: Series) -> float:
     """Returns the number of matches of the label and attachments between two trees
@@ -80,6 +110,7 @@ def get_tree_matches(gold_df: DataFrame, parsed_df: DataFrame) -> Tuple[TreeMatc
     assert gold_df.shape[0] == parsed_df.shape[0], 'trees must be aligned!'
     
     tokenization_matches = get_column_matches(gold_df['FORM'], parsed_df['FORM'])
+    word_matches = get_word_matches(gold_df['FORM'], parsed_df['FORM'])
     
     dfs = gold_df.merge(parsed_df, on='ID', suffixes=('_gold', '_parsed'))
     
@@ -92,6 +123,7 @@ def get_tree_matches(gold_df: DataFrame, parsed_df: DataFrame) -> Tuple[TreeMatc
         get_column_matches(dfs['HEAD_gold'], dfs['HEAD_parsed']),
         get_column_matches(dfs['DEPREL_gold'], dfs['DEPREL_parsed']),
         get_las_matches(dfs['HEAD_gold'], dfs['DEPREL_gold'], dfs['HEAD_parsed'], dfs['DEPREL_parsed']),
+        word_matches
     )
 
 def get_tree_counts(gold_df, parsed_df):
@@ -99,10 +131,12 @@ def get_tree_counts(gold_df, parsed_df):
     dfs = gold_df.merge(parsed_df, on='ID', suffixes=('_gold', '_parsed'))
     ref_token_count = dfs[dfs['FORM_gold'] != 'tok'].shape[0]
     pred_token_count = dfs[dfs['FORM_parsed'] != 'tok'].shape[0]
+    ref_word_count = dfs[~dfs['FORM_gold'].str.contains('\+')].shape[0]
     return TreeCounts(
         ref_token_count,
         pred_token_count,
-        gold_df.shape[0]
+        gold_df.shape[0],
+        ref_word_count
     )
     
 def get_sentence_list_counts(
@@ -130,14 +164,14 @@ def get_sentence_list_counts(
         p_df = p_sen.dependency_tree.copy()
         g_df, p_df = align_trees(g_df, p_df)
         
-        sentence_matches_list.append(get_tree_matches(g_df, p_df))
         sentence_counts_list.append(get_tree_counts(g_df, p_df))
+        sentence_matches_list.append(get_tree_matches(g_df, p_df))
         alignment_numbers_list.append(get_alignment_numbers(g_df, p_df))
     
-    sentence_counts = DataFrame(sentence_matches_list).sum()
-    sentence_matches = DataFrame(sentence_counts_list).sum()
+    sentence_counts = DataFrame(sentence_counts_list).sum()
+    sentence_matches = DataFrame(sentence_matches_list).sum()
     alignment_numbers = DataFrame(alignment_numbers_list).sum()
-        
+    
     return ConllxStatistics(
         sentence_counts,
         sentence_matches,
