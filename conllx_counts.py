@@ -10,7 +10,7 @@ Finally, the mean of each score is obtained for all sentences.
 
 from typing import List, Tuple
 
-from pandas import DataFrame, Series
+from pandas import DataFrame, Series, concat
 from align_trees import align_trees
 from ced_word_alignment.alignment import align_words
 from classes import AlignmentNumbers, ConllxStatistics, TreeCounts, TreeMatches
@@ -76,16 +76,17 @@ def get_word_matches(col_1: Series, col_2: Series) -> float:
     words_2 = sentence_2.split()
     for i, word_comp in enumerate(alignment):
         if word_comp[0] is None:
-            words_1.insert(i, 'tok')
+            words_1.insert(i, 'word')
         if word_comp[1] is None:
-            words_2.insert(i, 'tok')
+            words_2.insert(i, 'word')
+
+    gold_col = Series(words_1).rename('g')
+    parsed_col = Series(words_2).rename('p')
+    df = concat([gold_col, parsed_col], axis=1)
     
-    matches = 0
-    for word_1, word_2 in zip(words_1, words_2):
-        if word_1 == word_2:
-            matches += 1
+    removed_mismatches = df[~((df['g'] == 'word') | (df['p'] == 'word'))]
     
-    return get_column_matches(Series(words_1), Series(words_2))
+    return get_column_matches(removed_mismatches['g'], removed_mismatches['p'])
 
 def get_las_matches(head_1: Series, deprel_1: Series, head_2: Series, deprel_2: Series) -> float:
     """Returns the number of matches of the label and attachments between two trees

@@ -53,6 +53,6 @@ def get_scores_means(tree_matches_list, tree_counts_list, num_sentences) -> Conl
     
     scores_dict = {**get_attachment_scores(matches_df, counts_df, num_sentences), 
                    **get_f_score_components(matches_df, counts_df),
-                   **get_word_accuracy_score(matches_df['word_matches'].iloc[0], counts_df['ref_word_count'].iloc[0])}
+                   **get_word_accuracy_score(matches_df['word_matches'].sum(), counts_df['ref_word_count'].sum())}
 
     return ConllxScores(**scores_dict)
