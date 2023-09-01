@@ -61,11 +61,12 @@ if __name__ == '__main__':
         parsed_dir_path = pathlib.Path(arguments["--parsed_dir"])
         gold_file_names = get_file_names(arguments["--gold_dir"], '.conllx')
         parsed_file_names = get_file_names(arguments["--parsed_dir"], '.conllx')
-    else:
-        raise ValueError('Invalid arguments')
         
         # matching files
         tuple_list = get_synced_file_names(gold_file_names, parsed_file_names)
+    else:
+        raise ValueError('Invalid arguments')
+        
             
     # reading files and storing scores for each file
     tree_counts_list = []
