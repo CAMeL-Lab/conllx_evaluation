@@ -1,13 +1,39 @@
+"""
+Evaluates a parsed CoNLL file against gold or 
+    a directory containing parsed CoNLL files against a gold directory.
+
+Usage:
+    evaluate_conllx_driver (
+                            (-g <gold> | --gold=<gold>) (-p <parsed> | --parsed=<parsed>) 
+                            | 
+                            ((--gold-dir=<gold_dir>) (--parsed_dir=<parsed_dir>))
+                            )
+    evaluate_conllx_driver (-h | --help)
+
+Options:
+    -g <gold> --gold=<gold>
+        The gold CoNLL file.
+    -p <parsed> --parsed=<parsed>
+        The parsed CoNLL file.
+    --gold_dir=<gold_dir>
+        The directory containing gold CoNLL files.
+    --parsed_dir=<parsed_dir>
+        The directory containing parsed CoNLL files.
+    -h --help
+        Show this screen.
+
+"""
+
 import pathlib
+from docopt import docopt
 
 from pandas import DataFrame, Series
 from conllx_scores import get_scores_means
 from conllx_counts import get_sentence_list_counts
 from class_conllx import Conllx
-from handle_args import Argument, generate_argparser_with_arguments
 from utils import get_file_names
 
-SCRIPT_DESCRIPTION = 'This script takes 2 CoNLL-X files or 2 directories of CoNLL-X files and evaluates the scores.'
+arguments = docopt(__doc__)
 
 def get_synced_file_names(gold_file_names, parsed_file_names):
     tuple_list = []
