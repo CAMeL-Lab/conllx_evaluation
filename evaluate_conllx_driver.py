@@ -6,7 +6,7 @@ Usage:
     evaluate_conllx_driver (
                             (-g <gold> | --gold=<gold>) (-p <parsed> | --parsed=<parsed>) 
                             | 
-                            ((--gold-dir=<gold_dir>) (--parsed_dir=<parsed_dir>))
+                            ((--gold_dir=<gold_dir>) (--parsed_dir=<parsed_dir>))
                             )
     evaluate_conllx_driver (-h | --help)
 
@@ -50,17 +50,19 @@ def get_file_path_details(file_path):
     return dir_path, file_name
 
 if __name__ == '__main__':
-    if "--gold" in arguments and "--parsed" in arguments:
+    if arguments["--gold"] and arguments["--parsed"]:
         gold_dir_path, gold_file_name = get_file_path_details(arguments["--gold"])
         parsed_dir_path, parsed_file_name = get_file_path_details(arguments["--parsed"])
         print('comparing two files')
         tuple_list = [(gold_file_name, parsed_file_name)]
-    elif "--gold_dir" in arguments and "--parsed_dir" in arguments:
+    elif arguments["--gold_dir"] and arguments["--parsed_dir"]:
         print('comparing two directories')
         gold_dir_path = pathlib.Path(arguments["--gold_dir"])
         parsed_dir_path = pathlib.Path(arguments["--parsed_dir"])
         gold_file_names = get_file_names(arguments["--gold_dir"], '.conllx')
         parsed_file_names = get_file_names(arguments["--parsed_dir"], '.conllx')
+    else:
+        raise ValueError('Invalid arguments')
         
         # matching files
         tuple_list = get_synced_file_names(gold_file_names, parsed_file_names)
