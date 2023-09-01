@@ -1,13 +1,42 @@
+"""
+Evaluates a parsed CoNLL file against gold or 
+    a directory containing parsed CoNLL files against a gold directory.
+
+Usage:
+    evaluate_conllx_driver ((-g <gold> | --gold=<gold>) (-p <parsed> | --parsed=<parsed>) | ((--gold_dir=<gold_dir>) (--parsed_dir=<parsed_dir>)))
+        [-x | --transliterate_pnx]
+        [-n | --transliterate_num]
+    evaluate_conllx_driver (-h | --help)
+
+Options:
+    -g <gold> --gold=<gold>
+        The gold CoNLL file.
+    -p <parsed> --parsed=<parsed>
+        The parsed CoNLL file.
+    --gold_dir=<gold_dir>
+        The directory containing gold CoNLL files.
+    --parsed_dir=<parsed_dir>
+        The directory containing parsed CoNLL files.
+    -x --transliterate_pnx
+        Transliterate punctuation to Arabic script (punctuation will always match regardless of script)
+    -n --transliterate_num
+        Transliterate numbers to Arabic script (numbers will always match regardless of script)
+    -h --help
+        Show this screen.
+
+"""
+
 import pathlib
+from docopt import docopt
 
 from pandas import DataFrame, Series
 from conllx_scores import get_scores_means
 from conllx_counts import get_sentence_list_counts
 from class_conllx import Conllx
-from handle_args import Argument, generate_argparser_with_arguments
+from char_map import bw2ar_map_lines
 from utils import get_file_names
 
-SCRIPT_DESCRIPTION = 'This script takes 2 CoNLL-X files or 2 directories of CoNLL-X files and evaluates the scores.'
+arguments = docopt(__doc__)
 
 def get_synced_file_names(gold_file_names, parsed_file_names):
     tuple_list = []
@@ -17,36 +46,31 @@ def get_synced_file_names(gold_file_names, parsed_file_names):
         tuple_list.append((gold_file, parsed_file))
     return tuple_list
 
+def get_file_path_details(file_path):
+    full_path = pathlib.Path(file_path)
+    dir_path = full_path.parent
+    file_name = full_path.name
+    return dir_path, file_name
+
 if __name__ == '__main__':
-    arg_lists = {
-        "two_files": [
-            Argument('-g', '--gold', str, 'the gold CoNLL-X file'),
-            Argument('-p', '--parsed', str, 'the parsed CoNLL-X file')],
-        "two_dirs":[
-            Argument('-gd', '--gold_dir', str, 'the gold directory containing CoNLL-X files'),
-            Argument('-pd', '--parsed_dir', str, 'the parsed directory containing CoNLL-X files')]
-        }
-
-    args = generate_argparser_with_arguments(arg_lists, script_description=SCRIPT_DESCRIPTION)
-
-    if args.gold and args.parsed:
+    if arguments["--gold"] and arguments["--parsed"]:
+        gold_dir_path, gold_file_name = get_file_path_details(arguments["--gold"])
+        parsed_dir_path, parsed_file_name = get_file_path_details(arguments["--parsed"])
         print('comparing two files')
-        gold_full_path = pathlib.Path(args.gold)
-        parsed_full_path = pathlib.Path(args.parsed)
-        gold_dir_path = gold_full_path.parent
-        parsed_dir_path = parsed_full_path.parent
-        
-        tuple_list = [(gold_full_path.name, parsed_full_path.name)]
-    elif args.gold_dir and args.parsed_dir:
+        tuple_list = [(gold_file_name, parsed_file_name)]
+    elif arguments["--gold_dir"] and arguments["--parsed_dir"]:
         print('comparing two directories')
-        gold_dir_path = pathlib.Path(args.gold_dir)
-        parsed_dir_path = pathlib.Path(args.parsed_dir)
-        gold_file_names = get_file_names(args.gold_dir, '.conllx')
-        parsed_file_names = get_file_names(args.parsed_dir, '.conllx')
+        gold_dir_path = pathlib.Path(arguments["--gold_dir"])
+        parsed_dir_path = pathlib.Path(arguments["--parsed_dir"])
+        gold_file_names = get_file_names(arguments["--gold_dir"], '.conllx')
+        parsed_file_names = get_file_names(arguments["--parsed_dir"], '.conllx')
         
         # matching files
         tuple_list = get_synced_file_names(gold_file_names, parsed_file_names)
-            
+    else:
+        raise ValueError('Invalid arguments')
+
+
     # reading files and storing scores for each file
     tree_counts_list = []
     tree_matches_list = []
@@ -58,6 +82,12 @@ if __name__ == '__main__':
         gold_conllx.read_file()
         parsed_conllx = Conllx(file_name=parsed_file, file_path=parsed_dir_path)
         parsed_conllx.read_file()
+        if arguments['--transliterate_pnx']:
+            gold_conllx.file_data = bw2ar_map_lines(gold_conllx.file_data, 'punctuation')
+            parsed_conllx.file_data = bw2ar_map_lines(parsed_conllx.file_data, 'punctuation')
+        if arguments['--transliterate_num']:
+            gold_conllx.file_data = bw2ar_map_lines(gold_conllx.file_data, 'numbers')
+            parsed_conllx.file_data = bw2ar_map_lines(parsed_conllx.file_data, 'numbers')
         
         conllx_file_statistics = get_sentence_list_counts(gold_conllx.conllx_to_sentence_list(), parsed_conllx.conllx_to_sentence_list())
         tree_counts_list.append(conllx_file_statistics.tree_counts)
