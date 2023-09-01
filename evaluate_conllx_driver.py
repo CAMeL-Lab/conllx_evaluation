@@ -43,32 +43,24 @@ def get_synced_file_names(gold_file_names, parsed_file_names):
         tuple_list.append((gold_file, parsed_file))
     return tuple_list
 
+def get_file_path_details(file_path):
+    full_path = pathlib.Path(file_path)
+    dir_path = full_path.parent
+    file_name = full_path.name
+    return dir_path, file_name
+
 if __name__ == '__main__':
-    arg_lists = {
-        "two_files": [
-            Argument('-g', '--gold', str, 'the gold CoNLL-X file'),
-            Argument('-p', '--parsed', str, 'the parsed CoNLL-X file')],
-        "two_dirs":[
-            Argument('-gd', '--gold_dir', str, 'the gold directory containing CoNLL-X files'),
-            Argument('-pd', '--parsed_dir', str, 'the parsed directory containing CoNLL-X files')]
-        }
-
-    args = generate_argparser_with_arguments(arg_lists, script_description=SCRIPT_DESCRIPTION)
-
-    if args.gold and args.parsed:
+    if "--gold" in arguments and "--parsed" in arguments:
+        gold_dir_path, gold_file_name = get_file_path_details(arguments["--gold"])
+        parsed_dir_path, parsed_file_name = get_file_path_details(arguments["--parsed"])
         print('comparing two files')
-        gold_full_path = pathlib.Path(args.gold)
-        parsed_full_path = pathlib.Path(args.parsed)
-        gold_dir_path = gold_full_path.parent
-        parsed_dir_path = parsed_full_path.parent
-        
-        tuple_list = [(gold_full_path.name, parsed_full_path.name)]
-    elif args.gold_dir and args.parsed_dir:
+        tuple_list = [(gold_file_name, parsed_file_name)]
+    elif "--gold_dir" in arguments and "--parsed_dir" in arguments:
         print('comparing two directories')
-        gold_dir_path = pathlib.Path(args.gold_dir)
-        parsed_dir_path = pathlib.Path(args.parsed_dir)
-        gold_file_names = get_file_names(args.gold_dir, '.conllx')
-        parsed_file_names = get_file_names(args.parsed_dir, '.conllx')
+        gold_dir_path = pathlib.Path(arguments["--gold_dir"])
+        parsed_dir_path = pathlib.Path(arguments["--parsed_dir"])
+        gold_file_names = get_file_names(arguments["--gold_dir"], '.conllx')
+        parsed_file_names = get_file_names(arguments["--parsed_dir"], '.conllx')
         
         # matching files
         tuple_list = get_synced_file_names(gold_file_names, parsed_file_names)
