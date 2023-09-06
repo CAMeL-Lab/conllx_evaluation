@@ -37,6 +37,7 @@ from conllx_scores import get_scores_means
 from conllx_counts import get_sentence_list_counts
 from class_conllx import Conllx
 from char_map import bw2ar_map_lines
+from normalization import normalize_alef_yeh_ta
 from utils import get_file_names
 
 arguments = docopt(__doc__)
@@ -91,6 +92,9 @@ if __name__ == '__main__':
         if arguments['--transliterate_num']:
             gold_conllx.file_data = bw2ar_map_lines(gold_conllx.file_data, 'numbers')
             parsed_conllx.file_data = bw2ar_map_lines(parsed_conllx.file_data, 'numbers')
+        if arguments['--normalize_alef_yeh_ta']:
+            gold_conllx.file_data = normalize_alef_yeh_ta(gold_conllx.file_data)
+            parsed_conllx.file_data = normalize_alef_yeh_ta(parsed_conllx.file_data)
         
         conllx_file_statistics = get_sentence_list_counts(gold_conllx.conllx_to_sentence_list(), parsed_conllx.conllx_to_sentence_list())
         tree_counts_list.append(conllx_file_statistics.tree_counts)
