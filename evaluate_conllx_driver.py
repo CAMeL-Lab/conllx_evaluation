@@ -6,6 +6,7 @@ Usage:
     evaluate_conllx_driver ((-g <gold> | --gold=<gold>) (-p <parsed> | --parsed=<parsed>) | ((--gold_dir=<gold_dir>) (--parsed_dir=<parsed_dir>)))
         [-x | --transliterate_pnx]
         [-n | --transliterate_num]
+        [-a | --normalize_alef_yeh_ta]
     evaluate_conllx_driver (-h | --help)
 
 Options:
@@ -21,6 +22,8 @@ Options:
         Transliterate punctuation to Arabic script (punctuation will always match regardless of script)
     -n --transliterate_num
         Transliterate numbers to Arabic script (numbers will always match regardless of script)
+    -a --normalize_alef_yeh_ta
+        Normalizes alef, alef maksura, and teh marbuta
     -h --help
         Show this screen.
 
