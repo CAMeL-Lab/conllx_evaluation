@@ -6,6 +6,7 @@ Usage:
     evaluate_conllx_driver ((-g <gold> | --gold=<gold>) (-p <parsed> | --parsed=<parsed>) | ((--gold_dir=<gold_dir>) (--parsed_dir=<parsed_dir>)))
         [-x | --transliterate_pnx]
         [-n | --transliterate_num]
+        [-a | --normalize_alef_yeh_ta]
     evaluate_conllx_driver (-h | --help)
 
 Options:
@@ -21,6 +22,8 @@ Options:
         Transliterate punctuation to Arabic script (punctuation will always match regardless of script)
     -n --transliterate_num
         Transliterate numbers to Arabic script (numbers will always match regardless of script)
+    -a --normalize_alef_yeh_ta
+        Normalizes alef, alef maksura, and teh marbuta
     -h --help
         Show this screen.
 
@@ -34,6 +37,7 @@ from conllx_scores import get_scores_means
 from conllx_counts import get_sentence_list_counts
 from class_conllx import Conllx
 from char_map import bw2ar_map_lines
+from normalization import normalize_alef_yeh_ta
 from utils import get_file_names
 
 arguments = docopt(__doc__)
@@ -88,6 +92,9 @@ if __name__ == '__main__':
         if arguments['--transliterate_num']:
             gold_conllx.file_data = bw2ar_map_lines(gold_conllx.file_data, 'numbers')
             parsed_conllx.file_data = bw2ar_map_lines(parsed_conllx.file_data, 'numbers')
+        if arguments['--normalize_alef_yeh_ta']:
+            gold_conllx.file_data = normalize_alef_yeh_ta(gold_conllx.file_data)
+            parsed_conllx.file_data = normalize_alef_yeh_ta(parsed_conllx.file_data)
         
         conllx_file_statistics = get_sentence_list_counts(gold_conllx.conllx_to_sentence_list(), parsed_conllx.conllx_to_sentence_list())
         tree_counts_list.append(conllx_file_statistics.tree_counts)
