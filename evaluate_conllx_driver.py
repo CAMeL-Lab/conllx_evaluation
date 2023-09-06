@@ -19,9 +19,9 @@ Options:
     --parsed_dir=<parsed_dir>
         The directory containing parsed CoNLL files.
     -x --transliterate_pnx
-        Transliterate punctuation to Arabic script (punctuation will always match regardless of script)
+        Transliterate punctuation to Roman script (punctuation will always match regardless of script)
     -n --transliterate_num
-        Transliterate numbers to Arabic script (numbers will always match regardless of script)
+        Transliterate numbers to Roman script (numbers will always match regardless of script)
     -a --normalize_alef_yeh_ta
         Normalizes alef, alef maksura, and teh marbuta
     -h --help
