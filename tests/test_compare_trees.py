@@ -45,7 +45,11 @@ def test_compare_conll_trees():
     gold_conll = ConllxDf('tests/data/gold_sample_2.conllx')
     parsed_conll = ConllxDf('tests/data/parsed_sample_2.conllx')
     
-    conll_token_scores = compare_conll_trees(gold_conll, parsed_conll)
-    assert conll_token_scores['tokenization_f1_score'].round(3) == 90.444
-    assert conll_token_scores['tokenization_precision'].round(3) == 90.774
-    assert conll_token_scores['tokenization_recall'].round(3) == 90.385
+    conll_scores = compare_conll_trees(gold_conll, parsed_conll)
+    assert conll_scores['tokenization_f1_score'].round(3) == 90.444
+    assert conll_scores['tokenization_precision'].round(3) == 90.774
+    assert conll_scores['tokenization_recall'].round(3) == 90.385
+    assert conll_scores['pos'].round(3) == 86.538
+    assert conll_scores['uas_score'].round(3) == 65.385
+    assert conll_scores['label_score'].round(3) == 75.0
+    assert conll_scores['las_score'].round(3) == 57.692

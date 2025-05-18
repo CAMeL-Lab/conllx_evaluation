@@ -1,3 +1,4 @@
+from typing import List
 import pandas as pd
 from sklearn.metrics import f1_score
 
@@ -40,13 +41,32 @@ def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
     for i in range(ref_conll.get_sentence_count()):
         ref_tree = ref_conll.get_df_by_id(i)
         pred_tree = pred_conll.get_df_by_id(i)
-
+        ref_tree_token_count = ref_tree.shape[0]
+        
         ref_tree_aligned, pred_tree_aligned = align_trees(ref_tree, pred_tree)
-        conll_tree_scores.append(evaluate_tree_tokens(ref_tree_aligned, pred_tree_aligned, ref_tree.shape[0], pred_tree.shape[0]))
+
+        # f1_score, precision, and recall
+        tokenization_scores = evaluate_tree_tokens(ref_tree_aligned.FORM, pred_tree_aligned.FORM, ref_tree_token_count, pred_tree.shape[0])
+
+        pos_score = {'pos': evaluate_pos(ref_tree_aligned, pred_tree_aligned, ref_tree_token_count)}
+        
+        attachment_scores = {
+            'label_score': evaluate_label(ref_tree_aligned, pred_tree_aligned, ref_tree_token_count),
+            'uas_score': evaluate_uas(ref_tree_aligned, pred_tree_aligned, ref_tree_token_count),
+            'las_score': evaluate_las(ref_tree_aligned, pred_tree_aligned, ref_tree_token_count)
+        }
+
+        scores_combined = {**tokenization_scores, **pos_score, **attachment_scores}
+        conll_tree_scores.append(scores_combined)
+
     mean_df = pd.DataFrame(conll_tree_scores).mean()
     return {
         'tokenization_f1_score': mean_df.tokenization_f1_score,
         'tokenization_recall': mean_df.tokenization_recall,
-        'tokenization_precision': mean_df.tokenization_precision
+        'tokenization_precision': mean_df.tokenization_precision,
+        'pos': mean_df.pos,
+        'label_score': mean_df.label_score,
+        'uas_score': mean_df.uas_score,
+        'las_score': mean_df.las_score
     }
 
