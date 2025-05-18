@@ -20,6 +20,19 @@ def evaluate_tree_tokens(ref_tree_tokens, pred_tree_tokens, ref_tree_token_count
         'tokenization_precision': token_precision*100,
     }
 
+def evaluate_pos(ref_tree, pred_tree, ref_tree_token_count):
+    return 100 * ((ref_tree['UPOS'] == pred_tree['UPOS']).sum() / ref_tree_token_count)
+
+def evaluate_label(ref_tree, pred_tree, ref_tree_token_count):
+    return 100 * ((ref_tree['DEPREL'] == pred_tree['DEPREL']).sum() / ref_tree_token_count)
+
+def evaluate_uas(ref_tree, pred_tree, ref_tree_token_count):
+    return 100 * ((ref_tree['HEAD'] == pred_tree['HEAD']).sum() / ref_tree_token_count)
+
+def evaluate_las(ref_tree, pred_tree, ref_tree_token_count):
+    return 100 * (((ref_tree['HEAD'] == pred_tree['HEAD']) & (ref_tree['DEPREL'] == pred_tree['DEPREL'])).sum() / ref_tree_token_count)
+
+
 def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
     assert ref_conll.get_sentence_count() == pred_conll.get_sentence_count()
 
