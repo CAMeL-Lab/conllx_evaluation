@@ -33,12 +33,11 @@ import pathlib
 from docopt import docopt
 
 from pandas import DataFrame, Series
-from conllx_scores import get_scores_means
-from conllx_counts import get_sentence_list_counts
-from class_conllx import Conllx
-from char_map import bw2ar_map_lines
-from normalization import normalize_alef_yeh_ta
-from utils import get_file_names
+from conllx_df import ConllxDf
+from tree_evaluation import compare_conll_trees
+from utils.char_map import bw2ar_map_lines
+from utils.normalization import normalize_alef_yeh_ta
+from utils.utils import get_file_names
 
 arguments = docopt(__doc__)
 
@@ -81,33 +80,27 @@ if __name__ == '__main__':
     alignment_numbers_list = []
     num_sentences_list = []
 
+    conll_scores_list = []
     for gold_file, parsed_file in tuple_list:
-        gold_conllx = Conllx(file_name=gold_file, file_path=gold_dir_path)
-        gold_conllx.read_file()
-        parsed_conllx = Conllx(file_name=parsed_file, file_path=parsed_dir_path)
-        parsed_conllx.read_file()
+        gold_conllx = ConllxDf(gold_dir_path / gold_file)
+        parsed_conllx = ConllxDf(parsed_dir_path / parsed_file)
+
         if arguments['--transliterate_pnx']:
-            gold_conllx.file_data = bw2ar_map_lines(gold_conllx.file_data, 'punctuation')
-            parsed_conllx.file_data = bw2ar_map_lines(parsed_conllx.file_data, 'punctuation')
+            bw2ar_map_lines(gold_conllx.df, 'punctuation')
+            bw2ar_map_lines(parsed_conllx.df, 'punctuation')
         if arguments['--transliterate_num']:
-            gold_conllx.file_data = bw2ar_map_lines(gold_conllx.file_data, 'numbers')
-            parsed_conllx.file_data = bw2ar_map_lines(parsed_conllx.file_data, 'numbers')
+            bw2ar_map_lines(gold_conllx.df, 'numbers')
+            bw2ar_map_lines(parsed_conllx.df, 'numbers')
         if arguments['--normalize_alef_yeh_ta']:
-            gold_conllx.file_data = normalize_alef_yeh_ta(gold_conllx.file_data)
-            parsed_conllx.file_data = normalize_alef_yeh_ta(parsed_conllx.file_data)
+            normalize_alef_yeh_ta(gold_conllx.df)
+            normalize_alef_yeh_ta(parsed_conllx.df)
         
-        conllx_file_statistics = get_sentence_list_counts(gold_conllx.conllx_to_sentence_list(), parsed_conllx.conllx_to_sentence_list())
-        tree_counts_list.append(conllx_file_statistics.tree_counts)
-        tree_matches_list.append(conllx_file_statistics.tree_matches)
-        alignment_numbers_list.append(conllx_file_statistics.alignment_numbers)
-        num_sentences_list.append(conllx_file_statistics.sentence_number)
 
-    subcorpus_scores = get_scores_means(tree_matches_list, tree_counts_list, num_sentences_list)
+        conll_scores = {
+            'file_name': '.'.join(gold_file.split('.')[:-1]),
+            **compare_conll_trees(gold_conllx, parsed_conllx)
+        }
+        conll_scores_list.append(conll_scores)
 
-    # print("\t".join(map(str, list(Series(subcorpus_scores.__dict__.copy()).values))))
-    # print(DataFrame(alignment_numbers_list).sum())
-    print(Series(subcorpus_scores.__dict__.copy()))
-    print()
-    
-    results = DataFrame(alignment_numbers_list).sum()
-    results.to_csv('results.tsv', sep='\t', index=False)
+    scores_df = DataFrame(conll_scores_list).round(3)
+    scores_df.to_csv('results.tsv', sep='\t', index=False)

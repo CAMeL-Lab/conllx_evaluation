@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from align_trees import align_trees
+from src.align_trees import align_trees
 from src.conllx_df import ConllxDf
 from src.tree_evaluation import compare_conll_trees, evaluate_label, evaluate_las, evaluate_pos, evaluate_tree_tokens, evaluate_uas
 

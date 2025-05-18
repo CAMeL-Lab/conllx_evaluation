@@ -1,0 +1,41 @@
+# text = بسم الله الرحمن الرحيم
+1	ب+	_	PRT	PRT-b	_	4	MOD	_	_
+2	اسم	_	NOM	NOM	_	1	OBJ	_	_
+3	الله	_	PROP	NOM-PROP	_	2	IDF	_	_
+4	الرحمن	_	PROP	NOM-PROP	_	0	---	_	_
+5	الرحيم	_	PROP	NOM-PROP	_	4	---	_	_
+
+# text = الحمد لله رب العالمين والصلاة والسلام على سيد المرسلين سيدنا ومولانا محمد وعلى آله وصحبه صلاة وسلاماً دائمين إلى يوم الدين.
+1	الحمد	_	PROP	NOM-PROP	_	0	---	_	_
+2	ل+	_	PRT	PRT-l	_	1	MOD	_	_
+3	الله	_	PROP	NOM-PROP	_	2	OBJ	_	_
+4	رب	_	NOM	NOM	_	1	MOD	_	_
+5	العالمين	_	NOM	Al-NOM-yn	_	4	IDF	_	_
+6	و+	_	PRT	PRT-w	_	5	MOD	_	_
+7	الصلاة	_	NOM	Al-NOM-p	_	6	OBJ	_	_
+8	و+	_	PRT	PRT-w	_	7	MOD	_	_
+9	السلام	_	NOM	Al-NOM	_	8	OBJ	_	_
+10	على	_	PRT	PRT-PREP	_	4	MOD	_	_
+11	سيد	_	PROP	NOM-PROP	_	10	OBJ	_	_
+12	المرسلين	_	NOM	Al-NOM-yn	_	11	MOD	_	_
+13	سيد	_	NOM	NOM	_	1	MOD	_	_
+14	+نا	_	NOM	NOM-PRON	_	13	IDF	_	_
+15	و+	_	PRT	PRT-w	_	1	MOD	_	_
+16	مولا	_	VRB	VRB	_	15	OBJ	_	_
+17	+نا	_	NOM	NOM-PRON	_	16	OBJ	_	_
+18	محمد	_	PROP	NOM-PROP	_	16	SBJ	_	_
+19	و+	_	PRT	PRT-w	_	16	MOD	_	_
+20	على	_	PRT	PRT-PREP	_	19	OBJ	_	_
+21	آل	_	VRB	VRB	_	20	OBJ	_	_
+22	+ه	_	NOM	NOM-PRON	_	21	OBJ	_	_
+23	و+	_	PRT	PRT-w	_	21	MOD	_	_
+24	صحب	_	VRB	VRB	_	23	OBJ	_	_
+25	+ه	_	NOM	NOM-PRON	_	24	OBJ	_	_
+26	صلاة	_	NOM	NOM-p	_	24	SBJ	_	_
+27	و+	_	PRT	PRT-w	_	26	MOD	_	_
+28	سلاما	_	NOM	NOM-A	_	27	OBJ	_	_
+29	دائمين	_	NOM	NOM-yn	_	28	MOD	_	_
+30	إلى	_	PRT	PRT	_	28	MOD	_	_
+31	يوم	_	NOM	NOM	_	30	OBJ	_	_
+32	الدين	_	NOM	Al-NOM-yn	_	31	IDF	_	_
+33	.	_	PNX	PNX-DOT	_	1	MOD	_	_

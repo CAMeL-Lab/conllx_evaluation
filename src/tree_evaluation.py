@@ -1,9 +1,7 @@
-from typing import List
 import pandas as pd
-from sklearn.metrics import f1_score
 
 from align_trees import align_trees
-from src.conllx_df import ConllxDf
+from conllx_df import ConllxDf
 
 
 def evaluate_tree_tokens(ref_tree_tokens, pred_tree_tokens, ref_tree_token_count, pred_tree_token_count):
@@ -65,8 +63,8 @@ def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
         'tokenization_recall': mean_df.tokenization_recall,
         'tokenization_precision': mean_df.tokenization_precision,
         'pos': mean_df.pos,
+        'las_score': mean_df.las_score,
         'label_score': mean_df.label_score,
-        'uas_score': mean_df.uas_score,
-        'las_score': mean_df.las_score
+        'uas_score': mean_df.uas_score
     }
 
