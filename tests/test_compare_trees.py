@@ -15,7 +15,7 @@ def parsed_tree():
 
 def test_evaluate_tree_tokens(gold_tree, parsed_tree):
     new_g, new_p = align_trees(gold_tree, parsed_tree)
-    tree_token_scores = evaluate_tree_tokens(new_g, new_p, gold_tree.shape[0], parsed_tree.shape[0])
+    tree_token_scores = evaluate_tree_tokens(new_g.FORM, new_p.FORM, gold_tree.shape[0], parsed_tree.shape[0])
     assert tree_token_scores['tokenization_f1_score'].round(3) == 88.000
     assert tree_token_scores['tokenization_precision'].round(3) == 84.615
     assert tree_token_scores['tokenization_recall'].round(3) == 91.667

@@ -5,11 +5,11 @@ from align_trees import align_trees
 from src.conllx_df import ConllxDf
 
 
-def evaluate_tree_tokens(ref_tree, pred_tree, ref_tree_token_count, pred_tree_token_count):
+def evaluate_tree_tokens(ref_tree_tokens, pred_tree_tokens, ref_tree_token_count, pred_tree_token_count):
     # ref_tree and pred_tree have already been aligned
     # the original token counts are required to calculate the f1 score
 
-    token_matches = (ref_tree.FORM == pred_tree.FORM).sum()
+    token_matches = (ref_tree_tokens == pred_tree_tokens).sum()
 
     token_recall = token_matches / ref_tree_token_count
     token_precision = token_matches / pred_tree_token_count
