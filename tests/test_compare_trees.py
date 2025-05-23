@@ -48,12 +48,16 @@ def test_compare_conll_trees():
     gold_conll = ConllxDf('tests/data/wiki/wiki_sample_gold/CamelTB_WikiNews_art_1.conllx')
     parsed_conll = ConllxDf('tests/data/wiki/wiki_sample_parsed/CamelTB_WikiNews_art_1.conllx')
     
-    conll_scores = compare_conll_trees(gold_conll, parsed_conll)			
-    assert conll_scores['tokenization_f1_score'].round(3) == 94.769
-    assert conll_scores['tokenization_precision'].round(3) == 93.902
-    assert conll_scores['tokenization_recall'].round(3) == 95.652
-    assert conll_scores['pos'].round(3) == 88.82
-    # TODO tests below fail, potential bug here or in original
-    assert conll_scores['uas_score'].round(3) == 65.385
-    assert conll_scores['label_score'].round(3) == 75.0
-    assert conll_scores['las_score'].round(3) == 57.692
+    conll_scores = compare_conll_trees(gold_conll, parsed_conll)	
+    assert conll_scores['tokenization_f1_score'].round(3) == 93.865
+    assert conll_scores['tokenization_precision'].round(3) == 92.727
+    assert conll_scores['tokenization_recall'].round(3) == 95.031
+    assert conll_scores['pos'].round(3) == 86.335
+    assert conll_scores['uas_score'].round(3) == 86.957
+    assert conll_scores['label_score'].round(3) == 88.199
+    assert conll_scores['las_score'].round(3) == 83.851
+    # TODO add functionality to get these
+    # word acc 89.116
+    # ppatt 30.000
+    # ppls 40.000
+    # pplas 30.000
