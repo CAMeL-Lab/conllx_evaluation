@@ -6,7 +6,7 @@ import pandas as pd
 
 from src.align_trees import align_trees
 from src.conllx_df import ConllxDf
-from src.tree_evaluation import compare_conll_trees, evaluate_label, evaluate_las, evaluate_pos, evaluate_tree_tokens, evaluate_uas
+from src.tree_evaluation import compare_conll_trees, evaluate_columns, evaluate_las, evaluate_tree_tokens
 
 @pytest.fixture
 def gold_tree():
@@ -25,17 +25,17 @@ def test_evaluate_tree_tokens(gold_tree, parsed_tree):
 
 def test_evaluate_columns_pos(gold_tree, parsed_tree):
     new_g, new_p = align_trees(gold_tree, parsed_tree)
-    pos_score = evaluate_pos(new_g, new_p, gold_tree.shape[0])
+    pos_score = evaluate_columns(new_g['UPOS'], new_p['UPOS'], gold_tree.shape[0])
     assert pos_score.round(3) == 75.0
 
 def test_evaluate_label(gold_tree, parsed_tree):
     new_g, new_p = align_trees(gold_tree, parsed_tree)
-    pos_score = evaluate_label(new_g, new_p, gold_tree.shape[0])
+    pos_score = evaluate_columns(new_g['DEPREL'], new_p['DEPREL'], gold_tree.shape[0])
     assert pos_score.round(3) == 8.333
 
 def test_evaluate_uas(gold_tree, parsed_tree):
     new_g, new_p = align_trees(gold_tree, parsed_tree)
-    pos_score = evaluate_uas(new_g, new_p, gold_tree.shape[0])
+    pos_score = evaluate_columns(new_g['HEAD'], new_p['HEAD'], gold_tree.shape[0])
     assert pos_score.round(3) == 8.333
 
 def test_evaluate_las(gold_tree, parsed_tree):

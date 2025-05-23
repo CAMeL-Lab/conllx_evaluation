@@ -19,18 +19,12 @@ def evaluate_tree_tokens(ref_tree_tokens, pred_tree_tokens, total_ref_tree_token
         'tokenization_precision': token_precision*100,
     }
 
-def evaluate_pos(ref_tree, pred_tree, total_ref_tree_token_count):
-    return 100 * ((ref_tree['UPOS'] == pred_tree['UPOS']).sum() / total_ref_tree_token_count)
-
-def evaluate_label(ref_tree, pred_tree, total_ref_tree_token_count):
-    return 100 * ((ref_tree['DEPREL'] == pred_tree['DEPREL']).sum() / total_ref_tree_token_count)
-
-def evaluate_uas(ref_tree, pred_tree, total_ref_tree_token_count):
-    return 100 * ((ref_tree['HEAD'] == pred_tree['HEAD']).sum() / total_ref_tree_token_count)
+def evaluate_columns(column_1, column_2, column_count):
+    # return 100 * ((column_1.reset_index(drop=True) == column_2.reset_index(drop=True)).sum() / column_count)
+    return 100 * ((column_1 == column_2).sum() / column_count)
 
 def evaluate_las(ref_tree, pred_tree, total_ref_tree_token_count):
     return 100 * (((ref_tree['HEAD'] == pred_tree['HEAD']) & (ref_tree['DEPREL'] == pred_tree['DEPREL'])).sum() / total_ref_tree_token_count)
-
 
 # TODO compares two full conll files and not single trees, possibly rename
 def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
@@ -55,16 +49,15 @@ def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
     gold_df = pd.concat(aligned_df_gold_list)
     pred_df = pd.concat(aligned_df_pred_list)
     
-    # import pdb; pdb.set_trace()
     
     # f1_score, precision, and recall
     tokenization_scores = evaluate_tree_tokens(gold_df.FORM, pred_df.FORM, total_ref_tree_token_count, total_pred_tree_token_count)
 
-    pos_score = {'pos': evaluate_pos(gold_df, pred_df, total_ref_tree_token_count)}
+    pos_score = {'pos': evaluate_columns(gold_df['UPOS'], pred_df['UPOS'], total_ref_tree_token_count)}
     
     attachment_scores = {
-        'label_score': evaluate_label(gold_df, pred_df, total_ref_tree_token_count),
-        'uas_score': evaluate_uas(gold_df, pred_df, total_ref_tree_token_count),
+        'label_score': evaluate_columns(gold_df['DEPREL'], pred_df['DEPREL'], total_ref_tree_token_count),
+        'uas_score': evaluate_columns(gold_df['HEAD'], pred_df['HEAD'], total_ref_tree_token_count),
         'las_score': evaluate_las(gold_df, pred_df, total_ref_tree_token_count)
     }
 
