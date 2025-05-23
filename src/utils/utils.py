@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 
+from utils.char_map import bw2ar_map_lines
+from utils.normalization import normalize_alef_yeh_ta
+
 def get_file_names(data_path, endswith=''):
     ret_files = []
     if not os.path.isdir(Path(data_path)):
@@ -21,3 +24,14 @@ def get_file_names(data_path, endswith=''):
         # done within the os.walk for loop so 
         # it doesn't traverse subdirectories
         return ret_files
+
+def transliterate_and_normalize(arguments, gold_conllx, parsed_conllx):
+    if arguments['--transliterate_pnx']:
+        bw2ar_map_lines(gold_conllx.df, 'punctuation')
+        bw2ar_map_lines(parsed_conllx.df, 'punctuation')
+    if arguments['--transliterate_num']:
+        bw2ar_map_lines(gold_conllx.df, 'numbers')
+        bw2ar_map_lines(parsed_conllx.df, 'numbers')
+    if arguments['--normalize_alef_yeh_ta']:
+        normalize_alef_yeh_ta(gold_conllx.df)
+        normalize_alef_yeh_ta(parsed_conllx.df)

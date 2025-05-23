@@ -35,9 +35,7 @@ from docopt import docopt
 from pandas import DataFrame, Series
 from conllx_df import ConllxDf
 from tree_evaluation import compare_conll_trees
-from utils.char_map import bw2ar_map_lines
-from utils.normalization import normalize_alef_yeh_ta
-from utils.utils import get_file_names
+from utils.utils import get_file_names, transliterate_and_normalize
 
 arguments = docopt(__doc__)
 
@@ -85,17 +83,8 @@ if __name__ == '__main__':
         gold_conllx = ConllxDf(gold_dir_path / gold_file)
         parsed_conllx = ConllxDf(parsed_dir_path / parsed_file)
 
-        if arguments['--transliterate_pnx']:
-            bw2ar_map_lines(gold_conllx.df, 'punctuation')
-            bw2ar_map_lines(parsed_conllx.df, 'punctuation')
-        if arguments['--transliterate_num']:
-            bw2ar_map_lines(gold_conllx.df, 'numbers')
-            bw2ar_map_lines(parsed_conllx.df, 'numbers')
-        if arguments['--normalize_alef_yeh_ta']:
-            normalize_alef_yeh_ta(gold_conllx.df)
-            normalize_alef_yeh_ta(parsed_conllx.df)
+        transliterate_and_normalize(arguments, gold_conllx, parsed_conllx)
         
-
         conll_scores = {
             'file_name': '.'.join(gold_file.split('.')[:-1]),
             **compare_conll_trees(gold_conllx, parsed_conllx)
