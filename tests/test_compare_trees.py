@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, 'src')
+
 import pytest
 import pandas as pd
 
@@ -42,14 +45,15 @@ def test_evaluate_las(gold_tree, parsed_tree):
 
 
 def test_compare_conll_trees():
-    gold_conll = ConllxDf('tests/data/gold_sample_2.conllx')
-    parsed_conll = ConllxDf('tests/data/parsed_sample_2.conllx')
+    gold_conll = ConllxDf('tests/data/wiki/wiki_sample_gold/CamelTB_WikiNews_art_1.conllx')
+    parsed_conll = ConllxDf('tests/data/wiki/wiki_sample_parsed/CamelTB_WikiNews_art_1.conllx')
     
-    conll_scores = compare_conll_trees(gold_conll, parsed_conll)
-    assert conll_scores['tokenization_f1_score'].round(3) == 90.444
-    assert conll_scores['tokenization_precision'].round(3) == 90.774
-    assert conll_scores['tokenization_recall'].round(3) == 90.385
-    assert conll_scores['pos'].round(3) == 86.538
+    conll_scores = compare_conll_trees(gold_conll, parsed_conll)			
+    assert conll_scores['tokenization_f1_score'].round(3) == 94.769
+    assert conll_scores['tokenization_precision'].round(3) == 93.902
+    assert conll_scores['tokenization_recall'].round(3) == 95.652
+    assert conll_scores['pos'].round(3) == 88.82
+    # TODO tests below fail, potential bug here or in original
     assert conll_scores['uas_score'].round(3) == 65.385
     assert conll_scores['label_score'].round(3) == 75.0
     assert conll_scores['las_score'].round(3) == 57.692
