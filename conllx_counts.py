@@ -56,7 +56,7 @@ def get_pp_las_matches(head_1: Series, deprel_1: Series, head_2: Series, deprel_
     Returns:
         int: whether the sentence is perfect
     """
-    return int((head_1 == head_2).all() & (deprel_1 == deprel_2).all())
+    return int(((head_1 == head_2) & (deprel_1 == deprel_2)).all())
 
 def get_word_list(col_1):
     token_list = list(col_1) # ['a', '+b', 'c+', 'd']
