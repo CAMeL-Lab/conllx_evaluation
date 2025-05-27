@@ -56,8 +56,8 @@ def test_compare_conll_trees():
     assert conll_scores['uas_score'].round(3) == 86.957
     assert conll_scores['label_score'].round(3) == 88.199
     assert conll_scores['las_score'].round(3) == 83.851
+    assert conll_scores['pp_uas_score'].round(3) == 30.000
+    assert conll_scores['pp_label_score'].round(3) == 40.000
+    assert conll_scores['pp_las_score'].round(3) == 30.000
     # TODO add functionality to get these
     # word acc 89.116
-    # ppatt 30.000
-    # ppls 40.000
-    # pplas 30.000

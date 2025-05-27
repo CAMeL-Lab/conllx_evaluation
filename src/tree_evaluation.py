@@ -19,18 +19,31 @@ def evaluate_tree_tokens(ref_tree_tokens, pred_tree_tokens, total_ref_tree_token
         'tokenization_precision': token_precision*100,
     }
 
-def evaluate_columns(column_1, column_2, column_count):
-    # return 100 * ((column_1.reset_index(drop=True) == column_2.reset_index(drop=True)).sum() / column_count)
+def evaluate_columns(column_1, column_2, column_count, perfectly_parsed=False):
+    if perfectly_parsed:
+        return 100 * int((column_1 == column_2).all())
+
     return 100 * ((column_1 == column_2).sum() / column_count)
 
-def evaluate_las(ref_tree, pred_tree, total_ref_tree_token_count):
+def evaluate_las(ref_tree, pred_tree, total_ref_tree_token_count, perfectly_parsed=False):
+    if perfectly_parsed:
+        return 100 * int(((ref_tree['HEAD'] == pred_tree['HEAD']) & (ref_tree['DEPREL'] == pred_tree['DEPREL'])).all())
+    
     return 100 * (((ref_tree['HEAD'] == pred_tree['HEAD']) & (ref_tree['DEPREL'] == pred_tree['DEPREL'])).sum() / total_ref_tree_token_count)
 
-# TODO compares two full conll files and not single trees, possibly rename
+def evaluate_perfectly_parsed_trees(aligned_df_gold_list, aligned_df_pred_list):
+    scores = []
+    for gold_df, pred_df in zip(aligned_df_gold_list, aligned_df_pred_list):
+        scores.append({
+            'pp_label_score': evaluate_columns(gold_df['DEPREL'], pred_df['DEPREL'], 0, True),
+            'pp_uas_score': evaluate_columns(gold_df['HEAD'], pred_df['HEAD'], 0, True),
+            'pp_las_score': evaluate_las(gold_df, pred_df, 0, True)
+        })
+    return pd.DataFrame(scores).mean().to_dict()
+
 def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
     assert ref_conll.get_sentence_count() == pred_conll.get_sentence_count()
 
-    conll_tree_scores = []
     aligned_df_gold_list = []
     aligned_df_pred_list = []
 
@@ -61,18 +74,21 @@ def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
         'las_score': evaluate_las(gold_df, pred_df, total_ref_tree_token_count)
     }
 
-    scores_combined = {**tokenization_scores, **pos_score, **attachment_scores}
-    conll_tree_scores.append(scores_combined)
+    perfectly_parsed = evaluate_perfectly_parsed_trees(aligned_df_gold_list, aligned_df_pred_list)
+    scores_combined = {**tokenization_scores, **pos_score, **attachment_scores, **perfectly_parsed}
 
-    # TODO conll_tree_scores var can possibly be removed
-    mean_df = pd.DataFrame(conll_tree_scores).mean()
+    # converting to pandas and manually setting values to be able to use numpys round function later
+    final_scores = pd.Series(scores_combined)
     return {
-        'tokenization_f1_score': mean_df.tokenization_f1_score,
-        'tokenization_precision': mean_df.tokenization_precision,
-        'tokenization_recall': mean_df.tokenization_recall,
-        'pos': mean_df.pos,
-        'uas_score': mean_df.uas_score,
-        'label_score': mean_df.label_score,
-        'las_score': mean_df.las_score
+        'tokenization_f1_score': final_scores.tokenization_f1_score,
+        'tokenization_precision': final_scores.tokenization_precision,
+        'tokenization_recall': final_scores.tokenization_recall,
+        'pos': final_scores.pos,
+        'uas_score': final_scores.uas_score,
+        'label_score': final_scores.label_score,
+        'las_score': final_scores.las_score,
+        'pp_uas_score': final_scores.pp_uas_score,
+        'pp_label_score': final_scores.pp_label_score,
+        'pp_las_score': final_scores.pp_las_score
     }
 
