@@ -6,7 +6,7 @@ import pandas as pd
 
 from src.align_trees import align_trees
 from src.conllx_df import ConllxDf
-from src.tree_evaluation import compare_conll_trees, evaluate_columns, evaluate_las, evaluate_tree_tokens
+from src.tree_evaluation import compare_conll_trees, evaluate_columns, evaluate_las, evaluate_tree_tokens, evaluate_words
 
 @pytest.fixture
 def gold_tree():
@@ -61,3 +61,14 @@ def test_compare_conll_trees():
     assert conll_scores['pp_las_score'].round(3) == 30.000
     # TODO add functionality to get these
     # word acc 89.116
+
+def test_evaluate_words():
+    gold = pd.Series(['a', 'b+', 'c', 'd', '+e', '+'])
+    pred = pd.Series(['a', 'b+', 'c+', 'd', '+e', '+'])
+    assert evaluate_words(gold, pred) == 0.5
+
+def test_evaluate_words_2():
+    gold = pd.Series(['a', 'b+', 'c+', 'd', '+e', '+'])
+    pred = pd.Series(['a', 'b+', 'c', 'd', '+e', '+'])
+    assert evaluate_words(gold, pred) == 2/3
+    

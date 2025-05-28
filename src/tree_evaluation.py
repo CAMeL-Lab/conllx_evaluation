@@ -2,6 +2,7 @@ import pandas as pd
 
 from align_trees import align_trees
 from conllx_df import ConllxDf
+from utils.tokens_to_words import get_unsegmented_words
 
 
 def evaluate_tree_tokens(ref_tree_tokens, pred_tree_tokens, total_ref_tree_token_count, total_pred_tree_token_count):
@@ -18,6 +19,16 @@ def evaluate_tree_tokens(ref_tree_tokens, pred_tree_tokens, total_ref_tree_token
         'tokenization_recall': token_recall*100,
         'tokenization_precision': token_precision*100,
     }
+
+def evaluate_words(gold_column, pred_column):
+    """
+    """
+    gold_words = pd.DataFrame(get_unsegmented_words(gold_column.tolist()), columns=['FORM'])
+    pred_words = pd.DataFrame(get_unsegmented_words(pred_column.tolist()), columns=['FORM'])
+    # using align_trees on dataframe containing only form. if tokens are inserted the dataframe will contain all conll headers
+    gold_aligned, pred_aligned = align_trees(gold_words, pred_words)
+
+    return (gold_aligned.FORM == pred_aligned.FORM).sum() / gold_words.shape[0]
 
 def evaluate_columns(column_1, column_2, column_count, perfectly_parsed=False):
     if perfectly_parsed:
