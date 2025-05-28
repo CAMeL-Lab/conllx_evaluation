@@ -6,10 +6,6 @@ Also makes clitic checks. Ensures the token is actually a clitic and not compose
 
 from typing import List
 import re
-from utils.clitic_check import is_enclitic, is_proclitic
-
-
-
 
 def get_plus_toks_regex():
     # only composed of pluses
@@ -20,7 +16,6 @@ def is_enclitic(tok, plus_toks=get_plus_toks_regex()):
 
 def is_proclitic(tok, plus_toks=get_plus_toks_regex()):
     return tok.endswith('+') and not plus_toks.match(tok)
-
 
 def get_unsegmented_words(tokens: List[str]):
     words = []
