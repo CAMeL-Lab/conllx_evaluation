@@ -6,7 +6,7 @@ import pandas as pd
 
 from src.align_trees import align_trees
 from src.conllx_df import ConllxDf
-from src.tree_evaluation import compare_conll_trees, evaluate_columns, evaluate_las, evaluate_tree_tokens, evaluate_words
+from src.tree_evaluation import compare_conll_trees, evaluate_columns, evaluate_las, evaluate_tree_tokens, evaluate_word_accuracy, evaluate_words
 
 @pytest.fixture
 def gold_tree():
@@ -52,6 +52,7 @@ def test_compare_conll_trees():
     assert conll_scores['tokenization_f1_score'].round(3) == 93.865
     assert conll_scores['tokenization_precision'].round(3) == 92.727
     assert conll_scores['tokenization_recall'].round(3) == 95.031
+    assert conll_scores['word_accuracy'].round(3) == 96.177
     assert conll_scores['pos'].round(3) == 86.335
     assert conll_scores['uas_score'].round(3) == 86.957
     assert conll_scores['label_score'].round(3) == 88.199
@@ -71,4 +72,10 @@ def test_evaluate_words_2():
     gold = pd.Series(['a', 'b+', 'c+', 'd', '+e', '+'])
     pred = pd.Series(['a', 'b+', 'c', 'd', '+e', '+'])
     assert evaluate_words(gold, pred) == 2/3
+
+def test_evaluate_word_accuracy():
+    gold_data = ConllxDf('tests/data/word_acc_gold.conllx')
+    pred_list = ConllxDf('tests/data/word_acc_pred.conllx')
+    word_acc = evaluate_word_accuracy(gold_data, pred_list)
+    assert round(word_acc['word_accuracy'], 3) == 58.333
     

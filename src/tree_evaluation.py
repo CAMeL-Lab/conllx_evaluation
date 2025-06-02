@@ -42,6 +42,16 @@ def evaluate_las(ref_tree, pred_tree, total_ref_tree_token_count, perfectly_pars
     
     return 100 * (((ref_tree['HEAD'] == pred_tree['HEAD']) & (ref_tree['DEPREL'] == pred_tree['DEPREL'])).sum() / total_ref_tree_token_count)
 
+def evaluate_word_accuracy(ref_conll, pred_conll):
+    scores = []
+    for i in range(ref_conll.get_sentence_count()):
+        gold_df = ref_conll.get_df_by_id(i)
+        pred_df = pred_conll.get_df_by_id(i)
+        scores.append({
+            'word_accuracy': evaluate_words(gold_df['FORM'], pred_df['FORM']) * 100
+        })
+    return pd.DataFrame(scores).mean().to_dict()
+
 def evaluate_perfectly_parsed_trees(aligned_df_gold_list, aligned_df_pred_list):
     scores = []
     for gold_df, pred_df in zip(aligned_df_gold_list, aligned_df_pred_list):
@@ -52,9 +62,7 @@ def evaluate_perfectly_parsed_trees(aligned_df_gold_list, aligned_df_pred_list):
         })
     return pd.DataFrame(scores).mean().to_dict()
 
-def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
-    assert ref_conll.get_sentence_count() == pred_conll.get_sentence_count()
-
+def get_aligned_trees(ref_conll, pred_conll):
     aligned_df_gold_list = []
     aligned_df_pred_list = []
 
@@ -70,13 +78,18 @@ def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
         aligned_df_gold_list.append(ref_tree_aligned)
         aligned_df_pred_list.append(pred_tree_aligned)
     
+    return aligned_df_gold_list, aligned_df_pred_list, total_ref_tree_token_count, total_pred_tree_token_count
+
+def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
+    assert ref_conll.get_sentence_count() == pred_conll.get_sentence_count()
+
+    aligned_df_gold_list, aligned_df_pred_list, total_ref_tree_token_count, total_pred_tree_token_count = get_aligned_trees(ref_conll, pred_conll)
     gold_df = pd.concat(aligned_df_gold_list)
     pred_df = pd.concat(aligned_df_pred_list)
     
-    
     # f1_score, precision, and recall
     tokenization_scores = evaluate_tree_tokens(gold_df.FORM, pred_df.FORM, total_ref_tree_token_count, total_pred_tree_token_count)
-
+    word_accuracy = evaluate_word_accuracy(ref_conll, pred_conll)
     pos_score = {'pos': evaluate_columns(gold_df['UPOS'], pred_df['UPOS'], total_ref_tree_token_count)}
     
     attachment_scores = {
@@ -86,14 +99,15 @@ def compare_conll_trees(ref_conll: ConllxDf, pred_conll: ConllxDf):
     }
 
     perfectly_parsed = evaluate_perfectly_parsed_trees(aligned_df_gold_list, aligned_df_pred_list)
-    scores_combined = {**tokenization_scores, **pos_score, **attachment_scores, **perfectly_parsed}
 
     # converting to pandas and manually setting values to be able to use numpys round function later
+    scores_combined = {**tokenization_scores, **pos_score, **attachment_scores, **perfectly_parsed, **word_accuracy}
     final_scores = pd.Series(scores_combined)
     return {
         'tokenization_f1_score': final_scores.tokenization_f1_score,
         'tokenization_precision': final_scores.tokenization_precision,
         'tokenization_recall': final_scores.tokenization_recall,
+        'word_accuracy': final_scores.word_accuracy,
         'pos': final_scores.pos,
         'uas_score': final_scores.uas_score,
         'label_score': final_scores.label_score,
