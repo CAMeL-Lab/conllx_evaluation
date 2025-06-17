@@ -166,6 +166,7 @@ python src/main.py -g data/samples_gold/sample_4_norm.conllx -p data/samples_par
 python src/main.py --gold_dir=data/samples_gold --parsed_dir=data/samples_parsed
 ```
 |||
+|- |- |- |- |- |- |- |- |- |- |
 |tokenization_f_score| tokenization_precision| tokenization_recall| word_accuracy| pos| uas| label| las| pp_uas_score| pp_label_score| pp_las_score|
 |sample\_4\_norm|80\.0|80\.0|80\.0|75\.0|80\.0|80\.0|80\.0|80\.0|50\.0|50\.0|50\.0||
 |sample\_2|90\.385|90\.385|90\.385|97\.222|86\.538|65\.385|75\.0|57\.692|0\.0|0\.0|0\.0||
