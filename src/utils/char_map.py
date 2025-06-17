@@ -26,11 +26,6 @@ maps = {
     'numbers': numbers_map,
 }
 
-def bw2ar_map_line(line, selected_map):
-    for k, v in selected_map.items():
-        line = line.replace(k, v)
-    return line
-
-def bw2ar_map_lines(lines, map_name):
+def bw2ar_map_lines(conll_df, map_name):
     selected_map = maps[map_name]
-    return [bw2ar_map_line(line, selected_map) for line in lines]
+    conll_df.FORM = conll_df.FORM.map(selected_map).fillna(conll_df.FORM)

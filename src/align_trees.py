@@ -1,7 +1,7 @@
 
 from typing import Tuple
 from pandas import DataFrame, concat
-from ced_word_alignment.alignment import align_words
+from external_libraries.ced_word_alignment.alignment import align_words
 
 
 def get_new_row() -> DataFrame:
