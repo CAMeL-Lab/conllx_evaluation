@@ -93,3 +93,4 @@ if __name__ == '__main__':
 
     scores_df = DataFrame(conll_scores_list).round(3)
     scores_df.to_csv('results.tsv', sep='\t', index=False)
+    print('results saved in results.tsv')
